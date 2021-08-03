@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using WebApi.Configuration;
 using WebApi.Data.DbContext;
 using WebApi.Data.Interface.Repositories;
 using WebApi.Data.Repository;
@@ -25,14 +26,14 @@ namespace WebApi
         }
         public void ConfigureServices(IServiceCollection services)
         {
+            services.RegisterMappingConfig();
             services.AddDbContext<UserDbContext>(options => options.UseSqlServer(_configurationRoot.GetConnectionString("DefaultConnection")));
             services.AddCors();
             services.AddControllers();
-
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
             services.AddScoped<IUsersRepository, UsersRepository>();
             services.AddScoped<IUserService, UserService>();
-            services.AddScoped<IUserProvider, UserProvider>();
+            services.AddScoped<IUsersProvider, UsersProvider>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -45,7 +46,6 @@ namespace WebApi
                 .AllowAnyHeader());
 
             app.UseMiddleware<JwtMiddleware>();
-
             app.UseEndpoints(x => x.MapControllers());
         }
     }

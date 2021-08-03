@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using WebApi.Interfaces.Services;
 using WebApi.Models.Request;
-using WebApi.Models.Response;
 using WebApi.Models.UserModel;
 
 namespace WebApi.Controllers
@@ -46,6 +45,7 @@ namespace WebApi.Controllers
             return Ok(response.Result);
         }
 
+        
         [Authorize]
         [HttpGet]
         public IActionResult GetAll()
