@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
+using System.Threading.Tasks;
 using WebApi.Interfaces.Services;
 using WebApi.Models.Request;
-using WebApi.Models.UserModel;
 
 namespace WebApi.Controllers
 {
@@ -11,10 +10,7 @@ namespace WebApi.Controllers
     
     public class UsersController : ControllerBase
     {
-        private List<User> _users = new List<User>
-        {
-            new User { Id = 1, Name = "User", Password = "test" }
-        };
+        
         private IUserService _userService;
 
         public UsersController(IUserService userService)
@@ -23,35 +19,26 @@ namespace WebApi.Controllers
         }
 
         [HttpPost("authenticate")]
-        public IActionResult Authenticate(AuthenticateRequest model)
+        public async Task<IActionResult> AuthenticateAsync(AuthenticateRequest model)
         {
-            var response = _userService.AuthenticateAsync(model);
+            var response = await _userService.AuthenticateAsync(model).ConfigureAwait(false);
 
-            if (response.Result == null)
+            if (response == null)
                 return BadRequest(new { message = "Username or password is incorrect" });
 
-            return Ok(response.Result);
+            return Ok(response);
         }
 
  
         [HttpPost("register")]
-        public IActionResult Register(RegisterRequest model)
+        public async Task<IActionResult> RegisterAsync(RegisterRequest model)
         {
-            var response = _userService.Register(model);
+            var response = await _userService.Register(model).ConfigureAwait(false);
 
-            if (response.Result == null)
+            if (response == null)
                 return BadRequest(new { message = "Registration error" });
 
-            return Ok(response.Result);
-        }
-
-        
-        [Authorize]
-        [HttpGet]
-        public IActionResult GetAll()
-        {
-           
-            return Ok(_users);
+            return Ok(response);
         }
     }
 }
